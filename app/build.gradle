@@ -1,0 +1,131 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'org.jetbrains.kotlin.plugin.serialization'
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'dagger.hilt.android.plugin'
+
+android {
+    namespace 'com.suprematic.rawscore'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.suprematic.rawscore"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.0-alpha01'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+
+    // Inner project dependencies
+    implementation project(path: ":core:ui")
+    implementation project(path: ':core:data')
+    implementation project(path: ':core:domain')
+    implementation project(path: ':feature-score')
+    implementation project(path: ':core:utils')
+    implementation project(path: ':feature-games')
+    implementation project(path: ':feature-settings')
+
+    // Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_coroutines_android_version"
+
+    // Compose
+    implementation "androidx.compose.material:material-icons-extended:$compose_version"
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation("androidx.compose.material3:material3:$material_design_version")
+    implementation("androidx.compose.material3:material3-window-size-class:$material_design_version")
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+
+    // Coil for Compose
+    implementation("io.coil-kt:coil-compose:$coil_compose_version")
+
+    // Compose navigation
+    implementation "androidx.navigation:navigation-compose:$navigation_compose_version"
+
+    // Compose System UI manipulations
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_systemuicontroller_version"
+
+    //Dagger - Hilt
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_android_version"
+    implementation "com.google.dagger:hilt-android:$hilt_android_version"
+    kapt "androidx.hilt:hilt-compiler:$hilt_navigation_compose_version"
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose_version"
+
+    // Room
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:$room_version"
+
+    // Datastore
+    implementation "androidx.datastore:datastore-preferences:$datastore_preferences_version"
+
+    // Serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinx_serialization_version")
+
+    // Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+
+    // OK HTTP
+    implementation "com.squareup.okhttp3:okhttp:$ok_http_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$ok_http_version"
+
+    // Moshi
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi_kotlin_version"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_kotlin_codegen_version"
+
+    // Window metrics
+    implementation "androidx.window:window:$window_version"
+
+    // Tests
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test.ext:junit:$ext_junit_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    testImplementation "io.mockk:mockk:$mockk_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+    testImplementation "androidx.room:room-testing:$room_version"
+
+}
