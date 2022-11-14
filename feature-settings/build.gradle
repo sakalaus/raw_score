@@ -1,7 +1,12 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'org.jetbrains.kotlin.plugin.serialization'
 }
+
+apply plugin: 'com.android.library'
+apply plugin: 'dagger.hilt.android.plugin'
 
 android {
     namespace 'com.suprematic.feature.settings'
@@ -28,14 +33,49 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.0-alpha01'
+    }
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.7.0'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    // Inner project dependencies
+    implementation project(path: ":core:ui")
+    implementation project(path: ':core:domain')
+
+    // Compose
+    implementation "androidx.compose.material:material-icons-extended:$compose_version"
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation("androidx.compose.material3:material3:$material_design_version")
+    implementation("androidx.compose.material3:material3-window-size-class:$material_design_version")
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+
+    // Coil for Compose
+    implementation("io.coil-kt:coil-compose:$coil_compose_version")
+
+    // Compose navigation
+    implementation "androidx.navigation:navigation-compose:$navigation_compose_version"
+
+    //Dagger - Hilt
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_android_version"
+    implementation "com.google.dagger:hilt-android:$hilt_android_version"
+    kapt "androidx.hilt:hilt-compiler:$hilt_navigation_compose_version"
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation_compose_version"
+
+    // Tests
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test.ext:junit:$ext_junit_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    testImplementation "io.mockk:mockk:$mockk_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+    testImplementation "androidx.room:room-testing:$room_version"
+
 }

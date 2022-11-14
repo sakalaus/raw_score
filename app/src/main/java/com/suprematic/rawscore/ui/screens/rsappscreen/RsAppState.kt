@@ -5,10 +5,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavDestination
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
+import com.suprematic.feature.games.navigation.gamesNavigationRoute
+import com.suprematic.feature.games.navigation.navigateToGames
+import com.suprematic.feature.score.navigation.navigateToScore
+import com.suprematic.feature.score.navigation.scoreNavigationRoute
+import com.suprematic.feature.settings.navigation.navigateToSettings
+import com.suprematic.feature.settings.navigation.settingsNavigationRoute
 import com.suprematic.rawscore.navigation.RsTopLevelDestination
+import com.suprematic.rawscore.navigation.RsTopLevelDestination.*
 import kotlinx.coroutines.CoroutineScope
 
 
@@ -24,7 +33,7 @@ fun rememberRsAppState(
 }
 
 class RsAppState(
-    private val navController: NavHostController,
+    val navController: NavHostController,
     val coroutineScope: CoroutineScope,
     val windowSizeClass: WindowSizeClass,
 ) {
@@ -33,6 +42,43 @@ class RsAppState(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val topLevelDestinations = RsTopLevelDestination.values().asList()
+    val currentTopLevelDestination: RsTopLevelDestination?
+        @Composable get() = when (currentDestination?.route) {
+            scoreNavigationRoute -> SCORE
+            gamesNavigationRoute -> GAMES
+            settingsNavigationRoute -> SETTINGS
+            else -> null
+        }
+
+    val topLevelDestinations = values().asList()
+
+    fun navigateToTopLevelDestination(topLevelDestination: RsTopLevelDestination) {
+
+//            val topLevelNavOptions = navOptions {
+//                // Pop up to the start destination of the graph to
+//                // avoid building up a large stack of destinations
+//                // on the back stack as users select items
+//                popUpTo(navController.graph.findStartDestination().id) {
+//                    saveState = true
+//                }
+//                // Avoid multiple copies of the same destination when
+//                // reselecting the same item
+//                launchSingleTop = true
+//                // Restore state when reselecting a previously selected item
+//                restoreState = true
+//            }
+
+            val topLevelNavOptions = navOptions {  }
+
+            when (topLevelDestination) {
+                SCORE -> navController.navigateToScore(topLevelNavOptions)
+                GAMES -> navController.navigateToGames(topLevelNavOptions)
+                SETTINGS -> navController.navigateToSettings(topLevelNavOptions)
+            }
+    }
+
+    fun onBackClick() {
+        navController.popBackStack()
+    }
 
 }
