@@ -11,7 +11,9 @@ import androidx.core.view.WindowCompat
 import com.suprematic.rawscore.ui.screens.rsappscreen.RawScoreAppScreen
 import com.suprematic.rawscore.ui.theme.RawScoreTheme
 import com.suprematic.ui.window.WindowSizeClass
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -8,7 +8,6 @@ import androidx.navigation.compose.composable
 
 const val gamesNavigationRoute = "games_route"
 
-
 fun NavController.navigateToGames(navOptions: NavOptions? = null) {
     this.navigate(gamesNavigationRoute, navOptions)
 }

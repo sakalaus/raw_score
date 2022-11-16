@@ -2,6 +2,8 @@ package com.suprematic.rawscore.ui.screens.rsappscreen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -11,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.suprematic.rawscore.navigation.RsNavHost
+import com.suprematic.ui.widgets.RsTopAppBar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,6 +32,12 @@ fun RawScoreAppScreen(
     }
 
     Scaffold(
+        topBar = {
+            RsTopAppBar(
+                actionIcon = Icons.Default.MoreVert,
+                actionIconContentDescription = "Action icon"
+            )
+        },
         bottomBar = {
             RsAppBottomBar(
                 destinations = appState.topLevelDestinations,
