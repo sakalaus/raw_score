@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 
 @ProvidedTypeConverter
-internal class GameTypeConverter @Inject constructor(
+class GameTypeConverter @Inject constructor(
     private val jsonConverter: JsonConverter
 )  {
 

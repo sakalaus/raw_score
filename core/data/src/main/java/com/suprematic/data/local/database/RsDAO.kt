@@ -8,6 +8,8 @@ import com.suprematic.data.local.database.db_entities.DbGame
 import com.suprematic.data.local.database.db_entities.DbGameTrace
 import com.suprematic.data.local.database.db_entities.DbSport
 import com.suprematic.data.local.database.db_entities.DbTeam
+import com.suprematic.domain.entities.Sport
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RsDAO {
@@ -23,6 +25,34 @@ interface RsDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGameTraces(gameTraces: List<DbGameTrace>)
+
+    @Query("SELECT * FROM DbSport ORDER BY name ASC")
+    fun observeSports(): Flow<List<DbSport>>
+
+    @Query("SELECT * FROM DbSport ORDER BY name ASC")
+    fun getSports(): List<DbSport>
+
+    @Query("SELECT * FROM DbTeam ORDER BY name ASC")
+    fun observeTeams(): Flow<List<DbTeam>>
+
+    @Query("SELECT * FROM DbTeam ORDER BY name ASC")
+    suspend fun getTeams(): List<DbTeam>
+
+    @Query("SELECT * FROM DbGame ORDER BY timeStamp DESC")
+    fun observeGames(): Flow<List<DbGame>>
+
+    @Query("SELECT * FROM DbGame ORDER BY timeStamp DESC")
+    suspend fun getGames(): List<DbGame>
+
+    @Query("SELECT * FROM DbGame WHERE id = :gameId")
+    fun observeGame(gameId: Long): Flow<DbGame>
+
+//    @Query("SELECT SUM(pointsScoredTeamOne), SUM(pointsScoredTeamTwo) FROM DbGameTrace WHERE game = :game GROUP BY game")
+//    fun observePointsByGameTrace(game: DbGame, team: DbTeam): Flow<DbGameTrace>
+
+    @Query("DELETE FROM DbGameTrace WHERE game = :game " +
+            "AND timeStamp IN (SELECT MAX(timeStamp) FROM DbGameTrace WHERE game = :game)")
+    suspend fun deleteLastTraceEntry(game: DbGame)
 
     @Query("DELETE FROM DbSport")
     suspend fun clearAllSports()

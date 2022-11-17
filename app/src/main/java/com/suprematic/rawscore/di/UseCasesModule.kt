@@ -1,7 +1,10 @@
 package com.suprematic.rawscore.di
 
 import com.suprematic.domain.Repository
+import com.suprematic.domain.SettingsRepository
+import com.suprematic.domain.usecases.CheckAndCreateEssentialData
 import com.suprematic.domain.usecases.InitializeGameUseCase
+import com.suprematic.domain.usecases.SavePreferredSport
 import com.suprematic.domain.usecases.UseCases
 import dagger.Module
 import dagger.Provides
@@ -15,9 +18,12 @@ object UseCasesModule {
     @Provides
     @Singleton
     fun provideUseCases(
-        repository: Repository
+        repository: Repository,
+        settingsRepository: SettingsRepository
     ): UseCases =
         UseCases(
-            initializeGameUseCase = InitializeGameUseCase(repository)
+            initializeGameUseCase = InitializeGameUseCase(repository),
+            savePreferredSport = SavePreferredSport(settingsRepository),
+            checkAndCreateEssentialData = CheckAndCreateEssentialData(repository)
         )
 }

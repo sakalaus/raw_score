@@ -18,6 +18,7 @@ class ScoreViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
+        useCases.checkAndCreateEssentialData()
         _uiState.update {
             it.copy(
                 game = Game(
@@ -28,6 +29,12 @@ class ScoreViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    private fun checkIfCriticalDataIsPresentInDb() {
+
+
+
     }
 
     fun onEvent(event: ScoreUiEvent) {
