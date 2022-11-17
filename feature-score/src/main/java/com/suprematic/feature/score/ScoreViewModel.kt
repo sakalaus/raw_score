@@ -1,8 +1,7 @@
 package com.suprematic.feature.score
 
 import androidx.lifecycle.ViewModel
-import com.suprematic.domain.entities.Game
-import com.suprematic.domain.entities.Team
+import com.suprematic.domain.entities.*
 import com.suprematic.domain.usecases.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,8 +21,10 @@ class ScoreViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 game = Game(
-                    teamOne = Team(1, "Indiana Pacers"),
-                    teamTwo = Team(2, "Utah Jazz")
+                    id = 1,
+                    teamOne = teamOneIndiana,
+                    teamTwo = teamTwoUtah,
+                    sport = basketball
                 )
             )
         }

@@ -37,12 +37,12 @@ fun ScoreRoute(
     ScoreScreen(
         game = currentUiState.game,
         isStarted = currentUiState.isStarted,
-        isPaused = currentUiState.isPaused,
+        isPaused = currentUiState.game.isPaused,
         onGameInitialized = { viewModel.onEvent(ScoreUiEvent.GameInitialized) },
         onGamePause = { viewModel.onEvent(ScoreUiEvent.GamePaused) },
         onGameFinalize = { viewModel.onEvent(ScoreUiEvent.GameFinalized) },
         onUndoLastEntry = { viewModel.onEvent(ScoreUiEvent.EntryUndone) },
-        onPointsScored = { team: Team, points: Float ->
+        onPointsScored = { team: Team, points: Int ->
             viewModel.onEvent(
                 ScoreUiEvent.PointsScored(
                     team = team,
@@ -115,13 +115,13 @@ fun SquareNumericButton(
 @Composable
 fun PointsButton(
     team: Team,
-    pointsScored: Float,
+    pointsScored: Int,
     containerColor: Color,
-    onPointsScored: (Team, Float) -> Unit
+    onPointsScored: (Team, Int) -> Unit
 ) {
     SquareNumericButton(
         modifier = Modifier.size(124.dp),
-        caption = pointsScored.toInt().toString(),
+        caption = pointsScored.toString(),
         captionSize = 48.sp,
         containerColor = containerColor,
         contentColor = ThemeExtras.colors.buttonCaptionColor
@@ -133,9 +133,9 @@ fun PointsButton(
 @Composable
 fun ColumnScope.PointButtonRow(
     game: Game,
-    pointsScored: Float,
+    pointsScored: Int,
     containerColor: Color,
-    onPointsScored: (Team, Float) -> Unit
+    onPointsScored: (Team, Int) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -163,7 +163,7 @@ fun ColumnScope.PointButtonRow(
 @Composable
 fun ColumnScope.PointButtonGrid(
     game: Game,
-    onPointsScored: (Team, Float) -> Unit
+    onPointsScored: (Team, Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -172,19 +172,19 @@ fun ColumnScope.PointButtonGrid(
     ) {
         PointButtonRow(
             game = game,
-            pointsScored = 3f,
+            pointsScored = 3,
             containerColor = ThemeExtras.colors.buttonOneColor,
             onPointsScored = onPointsScored
         )
         PointButtonRow(
             game = game,
-            pointsScored = 2f,
+            pointsScored = 2,
             containerColor = ThemeExtras.colors.buttonTwoColor,
             onPointsScored = onPointsScored
         )
         PointButtonRow(
             game = game,
-            pointsScored = 1f,
+            pointsScored = 1,
             containerColor = ThemeExtras.colors.buttonThreeColor,
             onPointsScored = onPointsScored
         )
@@ -239,7 +239,7 @@ fun ScoreScreen(
     onGamePause: () -> Unit,
     onGameFinalize: () -> Unit,
     onUndoLastEntry: () -> Unit,
-    onPointsScored: (Team, Float) -> Unit,
+    onPointsScored: (Team, Int) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -317,7 +317,7 @@ fun ScoreBoard(game: Game) {
             fontStyle = FontStyle.Normal,
             color = ThemeExtras.colors.buttonCaptionColor,
             fontSize = 48.sp,
-            text = game.pointsTeamOne.toInt().toString()
+            text = game.pointsTeamOne.toString()
         )
         Text(
             modifier = Modifier.wrapContentSize(),
@@ -335,7 +335,7 @@ fun ScoreBoard(game: Game) {
             fontStyle = FontStyle.Normal,
             color = ThemeExtras.colors.buttonCaptionColor,
             fontSize = 48.sp,
-            text = game.pointsTeamTwo.toInt().toString()
+            text = game.pointsTeamTwo.toString()
         )
         Text(
             modifier = Modifier
@@ -382,16 +382,16 @@ fun GameNotStarted(
         )
     }
 }
-
-@Preview
-@Composable
-fun ScoreBoardPreview(
-){RawScoreTheme {
-    ScoreBoard(game = Game(
-        teamOne = Team(1, "Indiana Pacers"),
-        teamTwo = Team(2, "Milwaukee Bucks")
-    ))
-}}
+//
+//@Preview
+//@Composable
+//fun ScoreBoardPreview(
+//){RawScoreTheme {
+//    ScoreBoard(game = Game(
+//        teamOne = Team(1, "Indiana Pacers"),
+//        teamTwo = Team(2, "Milwaukee Bucks")
+//    ))
+//}}
 
 //@Preview
 //@Composable
