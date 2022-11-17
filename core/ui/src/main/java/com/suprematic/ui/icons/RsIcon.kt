@@ -1,16 +1,14 @@
 package com.suprematic.ui.icons
 
 import androidx.annotation.DrawableRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.rounded.*
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.suprematic.ui.R
 
 object RsIcons {
+    val Undo = R.drawable.undo
 }
 
-sealed class Icon {
-    data class ImageVectorIcon(val imageVector: ImageVector) : Icon()
-    data class DrawableResourceIcon(@DrawableRes val id: Int) : Icon()
+sealed class RsIcon {
+    data class ImageVectorIcon(val imageVector: ImageVector) : RsIcon()
+    data class DrawableResourceIcon(@DrawableRes val id: Int) : RsIcon()
 }

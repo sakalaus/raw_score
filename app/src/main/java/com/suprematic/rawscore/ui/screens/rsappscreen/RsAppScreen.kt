@@ -45,10 +45,11 @@ fun RawScoreAppScreen(
                 currentDestination = appState.currentDestination
             )
         }
-    ) {
+    ) { innerPadding ->
         RsNavHost(
             navController = appState.navController,
-            onBackClick = appState::onBackClick
+            onBackClick = appState::onBackClick,
+            innerPadding = innerPadding
         )
     }
 

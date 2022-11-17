@@ -9,5 +9,6 @@ sealed class ScoreUiEvent(
     object GameInitialized : ScoreUiEvent()
     object GamePaused: ScoreUiEvent()
     object GameFinalized: ScoreUiEvent()
+    object EntryUndone: ScoreUiEvent()
     class PointsScored(team: Team?, points: Float): ScoreUiEvent(team, points)
 }
