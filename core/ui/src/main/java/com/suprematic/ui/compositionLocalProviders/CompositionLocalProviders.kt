@@ -19,7 +19,8 @@ data class ExtraColorScheme(
     val bigIconColor: Color,
     val smallIconColor: Color,
     val mainCanvasColor: Color,
-    val buttonCaptionColor: Color
+    val captionColor: Color,
+    val buttonCaptionColorDimmed: Color
 )
 
 val extraColorScheme = ExtraColorScheme(
@@ -30,7 +31,8 @@ val extraColorScheme = ExtraColorScheme(
     bigIconColor = Color(0xFF3D315B),
     smallIconColor = Color(0xFF708B75),
     mainCanvasColor = Color.LightGray,
-    buttonCaptionColor = Color.White
+    captionColor = Color.White,
+    buttonCaptionColorDimmed = Color.LightGray
 )
 
 val LocalExtraColorSchemeProvider = staticCompositionLocalOf<ExtraColorScheme> {

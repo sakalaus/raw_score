@@ -6,17 +6,22 @@ import com.suprematic.domain.entities.Team
 import kotlinx.coroutines.flow.Flow
 
 interface Repository {
-    fun initializeGame()
-    fun registeredScoredPoints(game: Game, team: Team, points: Float)
-    fun undoLatestEntry(game: Game)
-    fun finalizeGame(game: Game)
-    suspend fun createTeams(teams: List<Team>)
-    suspend fun createSports(sports: List<Sport>)
-    fun getGames()
-    fun getGame(gameId: Game)
+    suspend fun getGames()
+    suspend fun getGame(gameId: Game)
+    suspend fun getGameInProgress(): Game?
     suspend fun getTeams(): List<Team>
     suspend fun getSports(): List<Sport>
-    suspend fun createTeam(name: String)
     fun observeSports(): Flow<List<Sport>>
     fun observeTeams(): Flow<List<Team>>
+    fun observeGame(gameId: Long): Flow<Game>
+    suspend fun createTeams(teams: List<Team>)
+    suspend fun createSports(sports: List<Sport>)
+    suspend fun createGames(games: List<Game>)
+    suspend fun toggleGamePaused(game: Game, isPaused: Boolean)
+    suspend fun initializeGame(): Game
+    suspend fun registeredScoredPoints(game: Game, team: Team, points: Float)
+    suspend fun undoLatestEntry(game: Game)
+    suspend fun finalizeGame(game: Game)
+    suspend fun clearAllGames()
+    suspend fun clearAllGameTraces()
 }

@@ -7,7 +7,7 @@ sealed class ScoreUiEvent(
     val points: Int = 0
 ) {
     object GameInitialized : ScoreUiEvent()
-    object GamePaused: ScoreUiEvent()
+    object GamePauseToggled: ScoreUiEvent()
     object GameFinalized: ScoreUiEvent()
     object EntryUndone: ScoreUiEvent()
     class PointsScored(team: Team?, points: Int): ScoreUiEvent(team, points)

@@ -30,7 +30,7 @@ interface RsDAO {
     fun observeSports(): Flow<List<DbSport>>
 
     @Query("SELECT * FROM DbSport ORDER BY name ASC")
-    fun getSports(): List<DbSport>
+    suspend fun getSports(): List<DbSport>
 
     @Query("SELECT * FROM DbTeam ORDER BY name ASC")
     fun observeTeams(): Flow<List<DbTeam>>
@@ -44,8 +44,14 @@ interface RsDAO {
     @Query("SELECT * FROM DbGame ORDER BY timeStamp DESC")
     suspend fun getGames(): List<DbGame>
 
+    @Query("SELECT * FROM DbGame WHERE isInProgress LIMIT 1")
+    suspend fun getGameInProgress(): DbGame
+
     @Query("SELECT * FROM DbGame WHERE id = :gameId")
     fun observeGame(gameId: Long): Flow<DbGame>
+
+    @Query("Update DbGame SET isPaused = :isPaused WHERE id = :gameId")
+    suspend fun toggleGamePaused(gameId: Long, isPaused: Boolean)
 
 //    @Query("SELECT SUM(pointsScoredTeamOne), SUM(pointsScoredTeamTwo) FROM DbGameTrace WHERE game = :game GROUP BY game")
 //    fun observePointsByGameTrace(game: DbGame, team: DbTeam): Flow<DbGameTrace>

@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface SettingsRepository {
     suspend fun savePreferredSport(key: String, value: Sport)
     fun observePreferredSport(key: String): Flow<Sport>
+    suspend fun getPreferredSport(key: String): Sport
 }

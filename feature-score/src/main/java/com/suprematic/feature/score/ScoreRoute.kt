@@ -17,7 +17,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,7 +26,6 @@ import com.suprematic.domain.entities.Team
 import com.suprematic.ui.compositionLocalProviders.ThemeExtras
 import com.suprematic.ui.icons.RsIcon
 import com.suprematic.ui.icons.RsIcon.*
-import com.suprematic.ui.theme.RawScoreTheme
 
 @Composable
 fun ScoreRoute(
@@ -36,21 +34,176 @@ fun ScoreRoute(
     val currentUiState = viewModel.uiState.collectAsState().value
     ScoreScreen(
         game = currentUiState.game,
-        isStarted = currentUiState.isStarted,
-        isPaused = currentUiState.game.isPaused,
+        isGameInitialized = currentUiState.isGameInitialized,
         onGameInitialized = { viewModel.onEvent(ScoreUiEvent.GameInitialized) },
-        onGamePause = { viewModel.onEvent(ScoreUiEvent.GamePaused) },
+        onGamePause = { viewModel.onEvent(ScoreUiEvent.GamePauseToggled) },
         onGameFinalize = { viewModel.onEvent(ScoreUiEvent.GameFinalized) },
-        onUndoLastEntry = { viewModel.onEvent(ScoreUiEvent.EntryUndone) },
-        onPointsScored = { team: Team, points: Int ->
-            viewModel.onEvent(
-                ScoreUiEvent.PointsScored(
-                    team = team,
-                    points = points
-                )
+        onUndoLastEntry = { viewModel.onEvent(ScoreUiEvent.EntryUndone) }
+    ) { team: Team, points: Int ->
+        viewModel.onEvent(
+            ScoreUiEvent.PointsScored(
+                team = team,
+                points = points
             )
+        )
+    }
+}
+
+@Composable
+fun ScoreScreen(
+    game: Game?,
+    isGameInitialized: Boolean,
+    onGameInitialized: () -> Unit,
+    onGamePause: () -> Unit,
+    onGameFinalize: () -> Unit,
+    onUndoLastEntry: () -> Unit,
+    onPointsScored: (Team, Int) -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp)
+    ) {
+        ScoreBoard(game = game)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.75f),
+            contentAlignment = Alignment.Center
+        ) {
+            if (isGameInitialized.not()) {
+                GameNotStarted {
+                    onGameInitialized()
+                }
+            } else {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(0.85f)
+                            .systemBarsPadding()
+                    ) {
+                        ControlButtonRow(
+                            game = game,
+                            onUndoLastEntry = onUndoLastEntry,
+                            onGamePauseToggle = onGamePause,
+                            onGameFinalize = onGameFinalize
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        PointButtonGrid(
+                            game = game,
+                            onPointsScored = onPointsScored
+                        )
+                    }
+                }
+            }
         }
+    }
+}
+
+@Composable
+fun GameNotStarted(
+    onGameInitialized: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        RoundedIconButton(
+            modifier = Modifier.size(128.dp),
+            icon = ImageVectorIcon(Icons.Filled.PlayArrow),
+            tint = ThemeExtras.colors.scoreBoardBackgroundColor
+        ) {
+            onGameInitialized()
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            modifier = Modifier
+                .wrapContentSize(),
+            style = TextStyle(
+                color = ThemeExtras.colors.bigIconColor,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal
+            ),
+            text = stringResource(id = R.string.start_match)
+        )
+    }
+}
+
+@Composable
+fun ColumnScope.ScoreBoard(game: Game?) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(0.25f),
+        colors = CardDefaults.cardColors(
+            containerColor = ThemeExtras.colors.scoreBoardBackgroundColor,
+            contentColor = ThemeExtras.colors.captionColor
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp
+        )
     )
+    {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .weight(0.3f),
+                textAlign = TextAlign.Center,
+                fontStyle = FontStyle.Normal,
+                color = ThemeExtras.colors.captionColor,
+                fontSize = 28.sp,
+                text = game?.teamOne?.name ?: ""
+            )
+            Text(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .weight(0.2f),
+                textAlign = TextAlign.Center,
+                fontStyle = FontStyle.Normal,
+                color = ThemeExtras.colors.captionColor,
+                fontSize = 48.sp,
+                text = game?.pointsTeamOne?.toString() ?: ""
+            )
+            Text(
+                modifier = Modifier.wrapContentSize(),
+                textAlign = TextAlign.Center,
+                fontStyle = FontStyle.Normal,
+                color = ThemeExtras.colors.captionColor,
+                fontSize = 48.sp,
+                text = ":"
+            )
+            Text(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .weight(0.2f),
+                textAlign = TextAlign.Center,
+                fontStyle = FontStyle.Normal,
+                color = ThemeExtras.colors.captionColor,
+                fontSize = 48.sp,
+                text = game?.pointsTeamTwo?.toString() ?: ""
+            )
+            Text(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .weight(0.3f),
+                textAlign = TextAlign.Center,
+                fontStyle = FontStyle.Normal,
+                color = ThemeExtras.colors.captionColor,
+                fontSize = 28.sp,
+                text = game?.teamTwo?.name ?: ""
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+        }
+    }
 }
 
 @Composable
@@ -100,8 +253,9 @@ fun SquareNumericButton(
             containerColor = containerColor,
             contentColor = contentColor
         ),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
         enabled = enabled,
-        shape = androidx.compose.ui.graphics.RectangleShape
+        shape = RoundedCornerShape(12.dp),
     ) {
         Text(
             modifier = Modifier.wrapContentSize(),
@@ -124,7 +278,7 @@ fun PointsButton(
         caption = pointsScored.toString(),
         captionSize = 48.sp,
         containerColor = containerColor,
-        contentColor = ThemeExtras.colors.buttonCaptionColor
+        contentColor = ThemeExtras.colors.captionColor
     ) {
         onPointsScored(team, pointsScored)
     }
@@ -132,7 +286,7 @@ fun PointsButton(
 
 @Composable
 fun ColumnScope.PointButtonRow(
-    game: Game,
+    game: Game?,
     pointsScored: Int,
     containerColor: Color,
     onPointsScored: (Team, Int) -> Unit
@@ -146,7 +300,7 @@ fun ColumnScope.PointButtonRow(
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         PointsButton(
-            team = game.teamOne!!,
+            team = game?.teamOne!!,
             pointsScored = pointsScored,
             containerColor = containerColor,
             onPointsScored = { team, pointsScored -> onPointsScored(team, pointsScored) }
@@ -162,7 +316,7 @@ fun ColumnScope.PointButtonRow(
 
 @Composable
 fun ColumnScope.PointButtonGrid(
-    game: Game,
+    game: Game?,
     onPointsScored: (Team, Int) -> Unit
 ) {
     Column(
@@ -193,8 +347,9 @@ fun ColumnScope.PointButtonGrid(
 
 @Composable
 fun ColumnScope.ControlButtonRow(
+    game: Game?,
     onUndoLastEntry: () -> Unit,
-    onGamePause: () -> Unit,
+    onGamePauseToggle: () -> Unit,
     onGameFinalize: () -> Unit,
 ) {
     Row(
@@ -214,10 +369,10 @@ fun ColumnScope.ControlButtonRow(
         Spacer(modifier = Modifier.width(24.dp))
         RoundedIconButton(
             modifier = Modifier.size(64.dp),
-            icon = ImageVectorIcon(Icons.Filled.PlayCircle),
+            icon = if(game!!.isPaused) ImageVectorIcon(Icons.Filled.PlayCircle) else ImageVectorIcon(Icons.Filled.PauseCircle),
             tint = ThemeExtras.colors.smallIconColor
         ) {
-            onGamePause()
+            onGamePauseToggle()
         }
         Spacer(modifier = Modifier.width(24.dp))
         RoundedIconButton(
@@ -230,158 +385,6 @@ fun ColumnScope.ControlButtonRow(
     }
 }
 
-@Composable
-fun ScoreScreen(
-    game: Game,
-    isStarted: Boolean,
-    isPaused: Boolean,
-    onGameInitialized: () -> Unit,
-    onGamePause: () -> Unit,
-    onGameFinalize: () -> Unit,
-    onUndoLastEntry: () -> Unit,
-    onPointsScored: (Team, Int) -> Unit,
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.25f)
-                .background(color = ThemeExtras.colors.scoreBoardBackgroundColor)
-        ){
-            ScoreBoard(
-                game = game
-            )
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.75f),
-            contentAlignment = Alignment.Center
-        ) {
-            if (isStarted.not()) {
-                GameNotStarted {
-                    onGameInitialized()
-                }
-            } else {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(0.85f)
-                            .systemBarsPadding()
-                    ) {
-                        ControlButtonRow(
-                            onUndoLastEntry = onUndoLastEntry,
-                            onGamePause = onGamePause,
-                            onGameFinalize = onGameFinalize
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        PointButtonGrid(
-                            game = game,
-                            onPointsScored = onPointsScored
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun ScoreBoard(game: Game) {
-    Row(
-        modifier = Modifier.fillMaxSize(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ){
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            modifier = Modifier
-                .wrapContentHeight()
-                .weight(0.3f),
-            textAlign = TextAlign.Center,
-            fontStyle = FontStyle.Normal,
-            color = ThemeExtras.colors.buttonCaptionColor,
-            fontSize = 28.sp,
-            text = game.teamOne?.name ?: ""
-        )
-        Text(
-            modifier = Modifier
-                .wrapContentHeight()
-                .weight(0.2f),
-            textAlign = TextAlign.Center,
-            fontStyle = FontStyle.Normal,
-            color = ThemeExtras.colors.buttonCaptionColor,
-            fontSize = 48.sp,
-            text = game.pointsTeamOne.toString()
-        )
-        Text(
-            modifier = Modifier.wrapContentSize(),
-            textAlign = TextAlign.Center,
-            fontStyle = FontStyle.Normal,
-            color = ThemeExtras.colors.buttonCaptionColor,
-            fontSize = 48.sp,
-            text = ":"
-        )
-        Text(
-            modifier = Modifier
-                .wrapContentHeight()
-                .weight(0.2f),
-            textAlign = TextAlign.Center,
-            fontStyle = FontStyle.Normal,
-            color = ThemeExtras.colors.buttonCaptionColor,
-            fontSize = 48.sp,
-            text = game.pointsTeamTwo.toString()
-        )
-        Text(
-            modifier = Modifier
-                .wrapContentHeight()
-                .weight(0.3f),
-            textAlign = TextAlign.Center,
-            fontStyle = FontStyle.Normal,
-            color = ThemeExtras.colors.buttonCaptionColor,
-            fontSize = 28.sp,
-            text = game.teamTwo?.name ?: ""
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-    }
-}
-
-@Composable
-fun GameNotStarted(
-    onGameInitialized: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .background(color = ThemeExtras.colors.mainCanvasColor)
-            .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        RoundedIconButton(
-            modifier = Modifier.size(128.dp),
-            icon = ImageVectorIcon(Icons.Filled.PlayArrow),
-            tint = ThemeExtras.colors.scoreBoardBackgroundColor
-        ) {
-            onGameInitialized()
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            modifier = Modifier
-                .wrapContentSize(),
-            style = TextStyle(
-                color = ThemeExtras.colors.bigIconColor,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Normal
-            ),
-            text = stringResource(id = R.string.start_match)
-        )
-    }
-}
 //
 //@Preview
 //@Composable

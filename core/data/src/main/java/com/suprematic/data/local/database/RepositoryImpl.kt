@@ -16,15 +16,15 @@ class RepositoryImpl @Inject constructor(
 
     private val dao = db.dao
 
-    override fun initializeGame() {
+    override suspend fun initializeGame(): Game {
         TODO("Not yet implemented")
     }
 
-    override fun registeredScoredPoints(game: Game, team: Team, points: Float) {
+    override suspend fun registeredScoredPoints(game: Game, team: Team, points: Float) {
         TODO("Not yet implemented")
     }
 
-    override fun finalizeGame(game: Game) {
+    override suspend fun finalizeGame(game: Game) {
         TODO("Not yet implemented")
     }
 
@@ -36,16 +36,20 @@ class RepositoryImpl @Inject constructor(
         dao.insertSports(sports.map { it.toDbEntity() })
     }
 
-    override fun undoLatestEntry(game: Game) {
+    override suspend fun undoLatestEntry(game: Game) {
         TODO("Not yet implemented")
     }
 
-    override fun getGames() {
+    override suspend fun getGames() {
         TODO("Not yet implemented")
     }
 
-    override fun getGame(gameId: Game) {
+    override suspend fun getGame(gameId: Game) {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun getGameInProgress(): Game? {
+        return dao.getGameInProgress()?.toDomainModel()
     }
 
     override suspend fun getTeams(): List<Team> {
@@ -56,8 +60,12 @@ class RepositoryImpl @Inject constructor(
         return dao.getSports().map { it.toDomainModel() }
     }
 
-    override suspend fun createTeam(name: String) {
-        TODO("Not yet implemented")
+    override suspend fun createGames(games: List<Game>) {
+        dao.insertGames(games.map { it.toDbEntity() })
+    }
+
+    override suspend fun toggleGamePaused(game: Game, isPaused: Boolean) {
+        dao.toggleGamePaused(gameId = game.id, isPaused = isPaused)
     }
 
     override fun observeSports(): Flow<List<Sport>>
@@ -72,6 +80,18 @@ class RepositoryImpl @Inject constructor(
         return dao.observeTeams().map { list ->
             list.map { it.toDomainModel() }
         }
+    }
+
+    override fun observeGame(gameId: Long): Flow<Game>
+    {
+        return dao.observeGame(gameId).map {it.toDomainModel()}
+    }
+    override suspend fun clearAllGames() {
+        dao.clearAllGames()
+    }
+
+    override suspend fun clearAllGameTraces() {
+        dao.clearAllGameTraces()
     }
 
 }
