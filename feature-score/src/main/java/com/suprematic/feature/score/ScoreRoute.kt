@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.suprematic.domain.entities.Game
 import com.suprematic.domain.entities.Team
+import com.suprematic.domain.entities.basketball
 import com.suprematic.ui.compositionLocalProviders.ThemeExtras
 import com.suprematic.ui.icons.RsIcon
 import com.suprematic.ui.icons.RsIcon.*
@@ -152,7 +153,7 @@ fun ColumnScope.ScoreBoard(game: Game?) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 modifier = Modifier
                     .wrapContentHeight()
@@ -170,7 +171,7 @@ fun ColumnScope.ScoreBoard(game: Game?) {
                 textAlign = TextAlign.Center,
                 fontStyle = FontStyle.Normal,
                 color = ThemeExtras.colors.captionColor,
-                fontSize = 48.sp,
+                fontSize = 42.sp,
                 text = game?.pointsTeamOne?.toString() ?: ""
             )
             Text(
@@ -188,7 +189,7 @@ fun ColumnScope.ScoreBoard(game: Game?) {
                 textAlign = TextAlign.Center,
                 fontStyle = FontStyle.Normal,
                 color = ThemeExtras.colors.captionColor,
-                fontSize = 48.sp,
+                fontSize = 42.sp,
                 text = game?.pointsTeamTwo?.toString() ?: ""
             )
             Text(
@@ -201,7 +202,7 @@ fun ColumnScope.ScoreBoard(game: Game?) {
                 fontSize = 28.sp,
                 text = game?.teamTwo?.name ?: ""
             )
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(8.dp))
         }
     }
 }
@@ -237,7 +238,7 @@ fun RoundedIconButton(
 }
 
 @Composable
-fun SquareNumericButton(
+fun NumericButton(
     modifier: Modifier,
     caption: String,
     captionSize: TextUnit,
@@ -273,7 +274,7 @@ fun PointsButton(
     containerColor: Color,
     onPointsScored: (Team, Int) -> Unit
 ) {
-    SquareNumericButton(
+    NumericButton(
         modifier = Modifier.size(124.dp),
         caption = pointsScored.toString(),
         captionSize = 48.sp,
@@ -281,6 +282,96 @@ fun PointsButton(
         contentColor = ThemeExtras.colors.captionColor
     ) {
         onPointsScored(team, pointsScored)
+    }
+}
+
+@Composable
+fun RowScope.SinglePointButton(
+    team: Team,
+    pointsScored: Int,
+    caption: String,
+    containerColor: Color,
+    onPointsScored: (Team, Int) -> Unit
+) {
+    NumericButton(
+        modifier = Modifier
+            .fillMaxHeight()
+            .weight(0.5f)
+            .padding(8.dp),
+        caption = caption,
+        captionSize = 48.sp,
+        containerColor = containerColor,
+        contentColor = ThemeExtras.colors.captionColor
+    ) {
+        onPointsScored(team, pointsScored)
+    }
+}
+
+@Composable
+fun ColumnScope.PointButtonGrid(
+    game: Game?,
+    onPointsScored: (Team, Int) -> Unit
+) {
+    if (game?.sport == basketball){
+        ThreePointButtonGrid(
+            game = game,
+            onPointsScored = onPointsScored
+        )
+    } else {
+        OnePointButtonGrid(
+            game = game,
+            onPointsScored = onPointsScored
+        )
+    }
+}
+
+@Composable fun ColumnScope.ThreePointButtonGrid(
+    game: Game?,
+    onPointsScored: (Team, Int) -> Unit
+){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(0.85f)
+    ) {
+        PointButtonRow(
+            game = game,
+            pointsScored = 3,
+            containerColor = ThemeExtras.colors.buttonOneColor,
+            onPointsScored = onPointsScored
+        )
+        PointButtonRow(
+            game = game,
+            pointsScored = 2,
+            containerColor = ThemeExtras.colors.buttonTwoColor,
+            onPointsScored = onPointsScored
+        )
+        PointButtonRow(
+            game = game,
+            pointsScored = 1,
+            containerColor = ThemeExtras.colors.buttonThreeColor,
+            onPointsScored = onPointsScored
+        )
+    }
+}
+
+@Composable
+fun ColumnScope.OnePointButtonGrid(
+    game: Game?,
+    onPointsScored: (Team, Int) -> Unit
+){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .weight(0.85f)
+    ) {
+        SinglePointButtonRow(
+            game = game,
+            pointsScored = 1,
+            containerColorOne = ThemeExtras.colors.buttonOneColor,
+            containerColorTwo = ThemeExtras.colors.buttonTwoColor,
+            onPointsScored = onPointsScored
+        )
     }
 }
 
@@ -315,32 +406,34 @@ fun ColumnScope.PointButtonRow(
 }
 
 @Composable
-fun ColumnScope.PointButtonGrid(
+fun ColumnScope.SinglePointButtonRow(
     game: Game?,
+    pointsScored: Int,
+    containerColorOne: Color,
+    containerColorTwo: Color,
     onPointsScored: (Team, Int) -> Unit
 ) {
-    Column(
+    Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .weight(0.85f)
+            .fillMaxSize()
+            .background(color = Color.Transparent)
+            .weight(1f),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        PointButtonRow(
-            game = game,
-            pointsScored = 3,
-            containerColor = ThemeExtras.colors.buttonOneColor,
-            onPointsScored = onPointsScored
+        SinglePointButton(
+            team = game?.teamOne!!,
+            pointsScored = pointsScored,
+            caption = "1",
+            containerColor = containerColorOne,
+            onPointsScored = { team, pointsScored -> onPointsScored(team, pointsScored) }
         )
-        PointButtonRow(
-            game = game,
-            pointsScored = 2,
-            containerColor = ThemeExtras.colors.buttonTwoColor,
-            onPointsScored = onPointsScored
-        )
-        PointButtonRow(
-            game = game,
-            pointsScored = 1,
-            containerColor = ThemeExtras.colors.buttonThreeColor,
-            onPointsScored = onPointsScored
+        SinglePointButton(
+            team = game.teamTwo!!,
+            pointsScored = pointsScored,
+            caption = "2",
+            containerColor = containerColorTwo,
+            onPointsScored = { team, pointsScored -> onPointsScored(team, pointsScored) }
         )
     }
 }

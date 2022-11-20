@@ -26,18 +26,17 @@ class ScoreViewModel @Inject constructor(
     init {
         useCases.makeSureSportsAndTeamsExist()
         viewModelScope.launch {
-            useCases.clearAllGamesAndTraces()
             useCases.getGameInProgress()?.let { game ->
                 _uiState.update { it.copy(isGameInitialized = true, game = game) }
+                initializeObservers()
             }
         }
-        initializeObservers()
     }
 
     private fun initializeObservers() {
         currentObserver?.cancel()
         currentObserver = useCases.observeGame(game = currentUiState.game).onEach { updatedGame ->
-            if (currentUiState.isGameInitialized){
+            if (currentUiState.isGameInitialized) {
                 _uiState.update { it.copy(game = updatedGame) }
             }
         }.launchIn(viewModelScope)
@@ -85,10 +84,7 @@ class ScoreViewModel @Inject constructor(
 
     private fun finalizeGame() {
         viewModelScope.launch {
-            val job = launch(Dispatchers.IO) {
-                currentUiState.game?.let { useCases.finalizeGame(it) }
-            }
-            job.join()
+            currentUiState.game?.let { useCases.finalizeGame(it) }
             _uiState.update { it.copy(isGameInitialized = false, game = null) }
             initializeObservers()
         }

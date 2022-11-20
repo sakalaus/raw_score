@@ -24,6 +24,8 @@ import com.suprematic.domain.entities.*
 import com.suprematic.ui.composables.EmptyScreen
 import com.suprematic.ui.compositionLocalProviders.ThemeExtras
 import com.suprematic.ui.theme.RawScoreTheme
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
 fun GamesRoute(
@@ -102,10 +104,20 @@ fun GameDataRow(game: Game) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 4.dp)
-                    .weight(0.8f),
+                    .weight(0.5f),
+                text = game.sport.name,
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                color = ThemeExtras.colors.captionColorSecondary
+            )
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .weight(0.5f),
                 text = "Game in progress",
                 textAlign = TextAlign.End,
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 color = colorInProgress
             )
         } else {
@@ -113,10 +125,25 @@ fun GameDataRow(game: Game) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 4.dp)
-                    .weight(0.8f),
-                text = "12.11.2022",
+                    .weight(0.5f),
+                text = game.sport.name,
+                textAlign = TextAlign.Start,
+                fontSize = 14.sp,
+                color = ThemeExtras.colors.captionColorSecondary
+            )
+            val dateFormat = SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.getDefault())
+            val calendar = Calendar.getInstance().apply {
+                timeInMillis = game.timeStamp
+            }
+            val stringDate = dateFormat.format(calendar.time)
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .weight(0.5f),
+                text = stringDate,
                 textAlign = TextAlign.End,
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 color = ThemeExtras.colors.captionColorSecondary
             )
         }
