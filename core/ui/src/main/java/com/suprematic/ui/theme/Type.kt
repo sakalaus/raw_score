@@ -1,4 +1,4 @@
-package com.suprematic.rawscore.ui.theme
+package com.suprematic.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

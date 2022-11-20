@@ -5,12 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import com.suprematic.rawscore.ui.screens.rsappscreen.RawScoreAppScreen
-import com.suprematic.rawscore.ui.theme.RawScoreTheme
-import com.suprematic.ui.window.WindowSizeClass
+import com.suprematic.ui.theme.RawScoreTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

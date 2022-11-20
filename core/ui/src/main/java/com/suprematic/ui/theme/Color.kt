@@ -1,4 +1,4 @@
-package com.suprematic.rawscore.ui.theme
+package com.suprematic.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

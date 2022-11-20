@@ -1,5 +1,7 @@
 package com.suprematic.rawscore.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -13,13 +15,13 @@ import com.suprematic.feature.settings.navigation.settingsScreen
 fun RsNavHost(
     navController: NavHostController,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    innerPadding: PaddingValues,
     startDestination: String = scoreNavigationRoute
 ) {
     NavHost(
     navController = navController,
     startDestination = startDestination,
-    modifier = modifier,
+    modifier = Modifier.padding(paddingValues = innerPadding),
     ) {
         scoreScreen()
         gamesScreen()

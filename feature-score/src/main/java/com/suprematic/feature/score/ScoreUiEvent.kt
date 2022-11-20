@@ -4,10 +4,11 @@ import com.suprematic.domain.entities.Team
 
 sealed class ScoreUiEvent(
     val team: Team? = null,
-    val points: Float = 0f
+    val points: Int = 0
 ) {
     object GameInitialized : ScoreUiEvent()
-    object GamePaused: ScoreUiEvent()
+    object GamePauseToggled: ScoreUiEvent()
     object GameFinalized: ScoreUiEvent()
-    class PointsScored(team: Team?, points: Float): ScoreUiEvent(team, points)
+    object EntryUndone: ScoreUiEvent()
+    class PointsScored(team: Team?, points: Int): ScoreUiEvent(team, points)
 }
