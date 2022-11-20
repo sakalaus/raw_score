@@ -25,10 +25,14 @@ object UseCasesModule {
             makeSureSportsAndTeamsExist = CheckAndCreateEssentialData(repository),
             observeSports = ObserveSports(repository),
             observeTeams = ObserveTeams(repository),
+            observeGames = ObserveGames(repository),
             observePreferredSport = ObservePreferredSport(settingsRepository),
             getGameInProgress = GetGameInProgress(repository),
             clearAllGamesAndTraces = ClearAllGamesAndTraces(repository),
             toggleGamePause = ToggleGamePause(repository),
-            observeGame = ObserveGame(repository)
+            observeGame = ObserveGame(repository),
+            finalizeGame = FinalizeGame(repository),
+            registerPointsScored = RegisterPointsScored(repository),
+            undoLastGameTraceEntry = UndoLastGameTraceEntry(repository)
         )
 }

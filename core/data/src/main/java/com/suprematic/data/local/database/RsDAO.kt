@@ -44,6 +44,9 @@ interface RsDAO {
     @Query("SELECT * FROM DbGame ORDER BY timeStamp DESC")
     suspend fun getGames(): List<DbGame>
 
+    @Query("SELECT * FROM DbGame WHERE id = :gameId")
+    suspend fun getGame(gameId: Long): DbGame
+
     @Query("SELECT * FROM DbGame WHERE isInProgress LIMIT 1")
     suspend fun getGameInProgress(): DbGame
 
@@ -53,12 +56,21 @@ interface RsDAO {
     @Query("Update DbGame SET isPaused = :isPaused WHERE id = :gameId")
     suspend fun toggleGamePaused(gameId: Long, isPaused: Boolean)
 
-//    @Query("SELECT SUM(pointsScoredTeamOne), SUM(pointsScoredTeamTwo) FROM DbGameTrace WHERE game = :game GROUP BY game")
-//    fun observePointsByGameTrace(game: DbGame, team: DbTeam): Flow<DbGameTrace>
+    @Query("UPDATE DbGame SET isInProgress = 0 WHERE id = :gameId")
+    suspend fun finalizeGame(gameId: Long)
 
-    @Query("DELETE FROM DbGameTrace WHERE game = :game " +
-            "AND timeStamp IN (SELECT MAX(timeStamp) FROM DbGameTrace WHERE game = :game)")
-    suspend fun deleteLastTraceEntry(game: DbGame)
+    @Query("UPDATE DbGame SET pointsTeamOne = :points WHERE id = :gameId")
+    suspend fun updatePointsTeamOneInGame(gameId: Long, points: Int)
+
+    @Query("UPDATE DbGame SET pointsTeamTwo = :points WHERE id = :gameId")
+    suspend fun updatePointsTeamTwoInGame(gameId: Long, points: Int)
+
+    @Query("SELECT SUM(pointsScored) FROM DbGameTrace WHERE gameId = :gameId AND team = :team")
+    fun calculatePointsByGameTrace(gameId: Long, team: DbTeam): Int
+
+    @Query("DELETE FROM DbGameTrace WHERE gameId = :gameId " +
+            "AND timeStamp IN (SELECT MAX(timeStamp) FROM DbGameTrace WHERE gameId = :gameId)")
+    suspend fun deleteLastTraceEntry(gameId: Long)
 
     @Query("DELETE FROM DbSport")
     suspend fun clearAllSports()

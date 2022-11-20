@@ -9,8 +9,12 @@ data class UseCases(
     val observeSports: ObserveSports,
     val observeTeams: ObserveTeams,
     val observeGame: ObserveGame,
+    val observeGames: ObserveGames,
     val observePreferredSport: ObservePreferredSport,
     val getGameInProgress: GetGameInProgress,
     val clearAllGamesAndTraces: ClearAllGamesAndTraces,
-    val toggleGamePause: ToggleGamePause
+    val toggleGamePause: ToggleGamePause,
+    val finalizeGame: FinalizeGame,
+    val registerPointsScored: RegisterPointsScored,
+    val undoLastGameTraceEntry: UndoLastGameTraceEntry
 )

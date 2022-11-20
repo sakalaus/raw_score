@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 import com.suprematic.domain.entities.Game
 
 @Entity
+@kotlinx.serialization.Serializable
 class DbGame(
     @PrimaryKey
     val id: Long,

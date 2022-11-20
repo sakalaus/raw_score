@@ -24,6 +24,7 @@ class DatabaseModule {
             RsDataBase::class.java,
             RsDataBase.DATABASE_NAME
         ).addTypeConverter(typeConverter)
+            .fallbackToDestructiveMigration()
             .build()
     }
 }

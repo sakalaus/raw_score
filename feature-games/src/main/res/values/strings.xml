@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="games">Games</string>
+    <string name="no_saved_games_yet">You have no saved games yet</string>
 </resources>

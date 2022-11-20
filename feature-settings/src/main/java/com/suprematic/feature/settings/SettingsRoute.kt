@@ -126,7 +126,7 @@ fun SportRadioButtonGroup(
                         selected = (sport == selectedSport),
                         colors = RadioButtonDefaults.colors(
                             selectedColor = ThemeExtras.colors.captionColor,
-                            unselectedColor = ThemeExtras.colors.buttonCaptionColorDimmed
+                            unselectedColor = ThemeExtras.colors.captionColorDimmed
 
                         ),
                         onClick = { onSportSelect(sport) }
@@ -137,7 +137,7 @@ fun SportRadioButtonGroup(
                             .padding(start = 16.dp),
                         text = sport.name,
                         fontSize = 16.sp,
-                        color = if (sport == selectedSport) ThemeExtras.colors.captionColor else ThemeExtras.colors.buttonCaptionColorDimmed,
+                        color = if (sport == selectedSport) ThemeExtras.colors.captionColor else ThemeExtras.colors.captionColorDimmed,
                         textAlign = TextAlign.Center
                     )
                 }

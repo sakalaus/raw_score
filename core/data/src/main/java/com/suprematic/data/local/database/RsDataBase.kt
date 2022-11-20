@@ -8,11 +8,10 @@ import com.suprematic.data.local.database.db_entities.DbGame
 import com.suprematic.data.local.database.db_entities.DbGameTrace
 import com.suprematic.data.local.database.db_entities.DbSport
 import com.suprematic.data.local.database.db_entities.DbTeam
-import com.suprematic.domain.entities.GameTrace
 
 @Database(
     entities = [DbGame::class, DbGameTrace::class, DbSport::class, DbTeam::class],
-    version = 1
+    version = 3
 )
 @TypeConverters(
     GameTypeConverter::class

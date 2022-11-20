@@ -8,22 +8,22 @@ import com.suprematic.domain.entities.GameTrace
 data class DbGameTrace(
     @PrimaryKey(autoGenerate = false)
     val timeStamp: Long,
-    val game: DbGame,
-    val pointsScoredTeamOne: Int,
-    val pointsScoredTeamTwo: Int
+    val gameId: Long,
+    val team: DbTeam,
+    val pointsScored: Int,
 )
 
 fun DbGameTrace.toDomainModel(): GameTrace = GameTrace(
     timeStamp = timeStamp,
-    game = game.toDomainModel(),
-    pointsScoredTeamOne = pointsScoredTeamOne,
-    pointsScoredTeamTwo = pointsScoredTeamTwo
+    gameId = gameId,
+    team = team.toDomainModel(),
+    pointsScored = pointsScored
 )
 
 fun GameTrace.toDbEntity(): DbGameTrace = DbGameTrace(
     timeStamp = timeStamp,
-    game = game.toDbEntity(),
-    pointsScoredTeamOne = pointsScoredTeamOne,
-    pointsScoredTeamTwo = pointsScoredTeamTwo
+    gameId = gameId,
+    team = team.toDbEntity(),
+    pointsScored = pointsScored
 )
 
