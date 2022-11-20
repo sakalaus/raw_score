@@ -1,10 +1,14 @@
 package com.suprematic.feature.score
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,9 +25,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.suprematic.domain.entities.Game
-import com.suprematic.domain.entities.Team
-import com.suprematic.domain.entities.basketball
+import com.suprematic.domain.entities.*
 import com.suprematic.ui.compositionLocalProviders.ThemeExtras
 import com.suprematic.ui.icons.RsIcon
 import com.suprematic.ui.icons.RsIcon.*
@@ -76,7 +78,17 @@ fun ScoreScreen(
                 GameNotStarted {
                     onGameInitialized()
                 }
-            } else {
+            }
+            androidx.compose.animation.AnimatedVisibility(
+                visible = isGameInitialized,
+                enter = fadeIn(
+                    animationSpec = tween(durationMillis = 500, easing = FastOutLinearInEasing)
+                ),
+                exit = fadeOut(
+                    animationSpec = tween(durationMillis = 500, easing = FastOutLinearInEasing)
+                ),
+
+            ) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     Column(
                         modifier = Modifier
@@ -99,6 +111,7 @@ fun ScoreScreen(
                 }
             }
         }
+
     }
 }
 
@@ -114,7 +127,7 @@ fun GameNotStarted(
     ) {
         RoundedIconButton(
             modifier = Modifier.size(128.dp),
-            icon = ImageVectorIcon(Icons.Filled.PlayArrow),
+            icon = ImageVectorIcon(Icons.Outlined.PlayCircle),
             tint = ThemeExtras.colors.scoreBoardBackgroundColor
         ) {
             onGameInitialized()
@@ -164,16 +177,7 @@ fun ColumnScope.ScoreBoard(game: Game?) {
                 fontSize = 28.sp,
                 text = game?.teamOne?.name ?: ""
             )
-            Text(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .weight(0.2f),
-                textAlign = TextAlign.Center,
-                fontStyle = FontStyle.Normal,
-                color = ThemeExtras.colors.captionColor,
-                fontSize = 42.sp,
-                text = game?.pointsTeamOne?.toString() ?: ""
-            )
+            AnimatedPoints(points = game?.pointsTeamOne)
             Text(
                 modifier = Modifier.wrapContentSize(),
                 textAlign = TextAlign.Center,
@@ -182,16 +186,7 @@ fun ColumnScope.ScoreBoard(game: Game?) {
                 fontSize = 48.sp,
                 text = ":"
             )
-            Text(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .weight(0.2f),
-                textAlign = TextAlign.Center,
-                fontStyle = FontStyle.Normal,
-                color = ThemeExtras.colors.captionColor,
-                fontSize = 42.sp,
-                text = game?.pointsTeamTwo?.toString() ?: ""
-            )
+            AnimatedPoints(points = game?.pointsTeamTwo)
             Text(
                 modifier = Modifier
                     .wrapContentHeight()
@@ -204,6 +199,36 @@ fun ColumnScope.ScoreBoard(game: Game?) {
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+fun RowScope.AnimatedPoints(points: Int?) {
+    AnimatedContent(
+        modifier = Modifier
+            .wrapContentHeight()
+            .weight(0.2f),
+        targetState = points ?: 0,
+        transitionSpec = {
+            if (targetState > initialState) {
+                slideInVertically { height -> height } + fadeIn() with
+                        slideOutVertically { height -> -height } + fadeOut()
+            } else {
+                slideInVertically { height -> -height } + fadeIn() with
+                        slideOutVertically { height -> height } + fadeOut()
+            }.using(
+                SizeTransform(clip = false)
+            )
+        }
+    ) { targetCount ->
+        Text(
+            textAlign = TextAlign.Center,
+            fontStyle = FontStyle.Normal,
+            color = ThemeExtras.colors.captionColor,
+            fontSize = 42.sp,
+            text = targetCount.toString()
+        )
     }
 }
 
@@ -312,7 +337,7 @@ fun ColumnScope.PointButtonGrid(
     game: Game?,
     onPointsScored: (Team, Int) -> Unit
 ) {
-    if (game?.sport == basketball){
+    if (game?.sport == basketball) {
         ThreePointButtonGrid(
             game = game,
             onPointsScored = onPointsScored
@@ -325,10 +350,11 @@ fun ColumnScope.PointButtonGrid(
     }
 }
 
-@Composable fun ColumnScope.ThreePointButtonGrid(
+@Composable
+fun ColumnScope.ThreePointButtonGrid(
     game: Game?,
     onPointsScored: (Team, Int) -> Unit
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -359,7 +385,7 @@ fun ColumnScope.PointButtonGrid(
 fun ColumnScope.OnePointButtonGrid(
     game: Game?,
     onPointsScored: (Team, Int) -> Unit
-){
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -422,14 +448,14 @@ fun ColumnScope.SinglePointButtonRow(
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         SinglePointButton(
-            team = game?.teamOne!!,
+            team = game?.teamOne ?: teamOneIndiana,
             pointsScored = pointsScored,
             caption = "1",
             containerColor = containerColorOne,
             onPointsScored = { team, pointsScored -> onPointsScored(team, pointsScored) }
         )
         SinglePointButton(
-            team = game.teamTwo!!,
+            team = game?.teamTwo ?: teamTwoUtah,
             pointsScored = pointsScored,
             caption = "2",
             containerColor = containerColorTwo,
@@ -462,7 +488,9 @@ fun ColumnScope.ControlButtonRow(
         Spacer(modifier = Modifier.width(24.dp))
         RoundedIconButton(
             modifier = Modifier.size(64.dp),
-            icon = if(game!!.isPaused) ImageVectorIcon(Icons.Filled.PlayCircle) else ImageVectorIcon(Icons.Filled.PauseCircle),
+            icon = if (game == null || game.isPaused) ImageVectorIcon(Icons.Filled.PlayCircle) else ImageVectorIcon(
+                Icons.Filled.PauseCircle
+            ),
             tint = ThemeExtras.colors.smallIconColor
         ) {
             onGamePauseToggle()
