@@ -488,7 +488,7 @@ fun ColumnScope.ControlButtonRow(
         Spacer(modifier = Modifier.width(24.dp))
         RoundedIconButton(
             modifier = Modifier.size(64.dp),
-            icon = if (game == null || game.isPaused) ImageVectorIcon(Icons.Filled.PlayCircle) else ImageVectorIcon(
+            icon = if (game?.isPaused == true) ImageVectorIcon(Icons.Filled.PlayCircle) else ImageVectorIcon(
                 Icons.Filled.PauseCircle
             ),
             tint = ThemeExtras.colors.smallIconColor
