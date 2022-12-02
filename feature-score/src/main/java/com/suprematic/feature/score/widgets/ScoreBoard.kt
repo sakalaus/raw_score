@@ -37,10 +37,11 @@ fun ColumnScope.ScoreBoard(
         )
     )
     {
+        Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(if (game == null) 1f else 0.6f),
+                .weight(if (game == null) 1f else 0.8f),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -77,23 +78,22 @@ fun ColumnScope.ScoreBoard(
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
-        game?.let{
+        game?.let {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(0.25f),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
-            ){
+            ) {
                 Text(
                     modifier = Modifier.wrapContentSize(),
                     textAlign = TextAlign.Center,
                     fontStyle = FontStyle.Normal,
                     color = ThemeExtras.colors.captionColor,
-                    fontSize = 32.sp,
-                    text = game?.let {
-                        game.duration.formatAsTime()
-                    } ?: ""
+                    fontSize = 20.sp,
+                    text =
+                    "${game.duration.formatAsTime()} ${if (game.isPaused) " (paused)" else ""}"
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -135,16 +135,16 @@ fun RowScope.AnimatedPoints(points: Int?) {
 @Preview
 @Composable
 fun ScoreScreenPreview(
-){
+) {
     RawScoreTheme() {
         ScoreScreen(
             game = mockGame,
-            isGameInitialized = true ,
+            isGameInitialized = true,
             onGameInitialized = {},
             onGamePause = {},
             onGameFinalize = {},
             onUndoLastEntry = {},
-            onPointsScored = {_,_ -> }
+            onPointsScored = { _, _ -> }
         )
     }
 }
