@@ -36,6 +36,10 @@ class RepositoryImpl @Inject constructor(
             dao.updatePointsTeamTwoInGame(gameId = game.id, points = points)
     }
 
+    override suspend fun updateGameDuration(gameId: Long, duration: Long) {
+        dao.updateGameDuration(gameId = gameId, duration = duration)
+    }
+
     override suspend fun calculatePointsByGameTrace(game: Game, team: Team): Int {
         return dao.calculatePointsByGameTrace(gameId = game.id, team = team.toDbEntity())
     }

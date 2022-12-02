@@ -27,9 +27,11 @@ interface Repository {
     suspend fun registerPointsInTrace(gameTrace: GameTrace)
     suspend fun undoLastGameTraceEntry(game: Game)
     suspend fun updatePointsInGame(game: Game, team: Team, points: Int, firstTeamScored: Boolean)
+    suspend fun updateGameDuration(gameId: Long, duration: Long)
     suspend fun calculatePointsByGameTrace(game: Game, team: Team): Int
     suspend fun finalizeGame(game: Game)
 
     suspend fun clearAllGames()
     suspend fun clearAllGameTraces()
+
 }

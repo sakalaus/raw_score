@@ -33,6 +33,7 @@ object UseCasesModule {
             observeGame = ObserveGame(repository),
             finalizeGame = FinalizeGame(repository),
             registerPointsScored = RegisterPointsScored(repository),
-            undoLastGameTraceEntry = UndoLastGameTraceEntry(repository)
+            undoLastGameTraceEntry = UndoLastGameTraceEntry(repository),
+            updateGameDuration = UpdateGameDuration(repository)
         )
 }

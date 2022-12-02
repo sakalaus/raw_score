@@ -16,5 +16,6 @@ data class UseCases(
     val toggleGamePause: ToggleGamePause,
     val finalizeGame: FinalizeGame,
     val registerPointsScored: RegisterPointsScored,
-    val undoLastGameTraceEntry: UndoLastGameTraceEntry
+    val undoLastGameTraceEntry: UndoLastGameTraceEntry,
+    val updateGameDuration: UpdateGameDuration
 )

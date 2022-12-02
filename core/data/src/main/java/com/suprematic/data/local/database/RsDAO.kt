@@ -59,6 +59,9 @@ interface RsDAO {
     @Query("UPDATE DbGame SET isInProgress = 0 WHERE id = :gameId")
     suspend fun finalizeGame(gameId: Long)
 
+    @Query("UPDATE DbGame SET duration = :duration WHERE id = :gameId")
+    suspend fun updateGameDuration(gameId: Long, duration: Long)
+
     @Query("UPDATE DbGame SET pointsTeamOne = :points WHERE id = :gameId")
     suspend fun updatePointsTeamOneInGame(gameId: Long, points: Int)
 

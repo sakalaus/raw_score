@@ -46,6 +46,7 @@ dependencies {
     // Inner project dependencies
     implementation project(path: ":core:ui")
     implementation project(path: ':core:domain')
+    implementation project(path: ':core:utils')
 
     // Compose
     implementation "androidx.compose.material:material-icons-extended:$compose_version"

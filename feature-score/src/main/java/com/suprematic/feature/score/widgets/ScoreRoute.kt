@@ -1,34 +1,36 @@
 package com.suprematic.feature.score
 
-import androidx.compose.animation.*
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.PauseCircle
+import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.Replay
+import androidx.compose.material.icons.filled.StopCircle
 import androidx.compose.material.icons.outlined.PlayCircle
-import androidx.compose.material3.*
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.suprematic.domain.entities.*
+import com.suprematic.feature.score.widgets.PointsButton
+import com.suprematic.feature.score.widgets.RoundedIconButton
+import com.suprematic.feature.score.widgets.ScoreBoard
+import com.suprematic.feature.score.widgets.SinglePointButton
 import com.suprematic.ui.compositionLocalProviders.ThemeExtras
-import com.suprematic.ui.icons.RsIcon
-import com.suprematic.ui.icons.RsIcon.*
+import com.suprematic.ui.icons.RsIcon.ImageVectorIcon
 
 @Composable
 fun ScoreRoute(
@@ -67,7 +69,9 @@ fun ScoreScreen(
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        ScoreBoard(game = game)
+        ScoreBoard(
+            game = game
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -75,7 +79,7 @@ fun ScoreScreen(
             contentAlignment = Alignment.Center
         ) {
             if (isGameInitialized.not()) {
-                GameNotStarted {
+                GameNotStartedScreen {
                     onGameInitialized()
                 }
             }
@@ -116,7 +120,7 @@ fun ScoreScreen(
 }
 
 @Composable
-fun GameNotStarted(
+fun GameNotStartedScreen(
     onGameInitialized: () -> Unit
 ) {
     Column(
@@ -143,192 +147,6 @@ fun GameNotStarted(
             ),
             text = stringResource(id = R.string.start_match)
         )
-    }
-}
-
-@Composable
-fun ColumnScope.ScoreBoard(game: Game?) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .weight(0.25f),
-        colors = CardDefaults.cardColors(
-            containerColor = ThemeExtras.colors.scoreBoardBackgroundColor,
-            contentColor = ThemeExtras.colors.captionColor
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
-        )
-    )
-    {
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .weight(0.3f),
-                textAlign = TextAlign.Center,
-                fontStyle = FontStyle.Normal,
-                color = ThemeExtras.colors.captionColor,
-                fontSize = 28.sp,
-                text = game?.teamOne?.name ?: ""
-            )
-            AnimatedPoints(points = game?.pointsTeamOne)
-            Text(
-                modifier = Modifier.wrapContentSize(),
-                textAlign = TextAlign.Center,
-                fontStyle = FontStyle.Normal,
-                color = ThemeExtras.colors.captionColor,
-                fontSize = 48.sp,
-                text = ":"
-            )
-            AnimatedPoints(points = game?.pointsTeamTwo)
-            Text(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .weight(0.3f),
-                textAlign = TextAlign.Center,
-                fontStyle = FontStyle.Normal,
-                color = ThemeExtras.colors.captionColor,
-                fontSize = 28.sp,
-                text = game?.teamTwo?.name ?: ""
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-        }
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun RowScope.AnimatedPoints(points: Int?) {
-    AnimatedContent(
-        modifier = Modifier
-            .wrapContentHeight()
-            .weight(0.2f),
-        targetState = points ?: 0,
-        transitionSpec = {
-            if (targetState > initialState) {
-                slideInVertically { height -> height } + fadeIn() with
-                        slideOutVertically { height -> -height } + fadeOut()
-            } else {
-                slideInVertically { height -> -height } + fadeIn() with
-                        slideOutVertically { height -> height } + fadeOut()
-            }.using(
-                SizeTransform(clip = false)
-            )
-        }
-    ) { targetCount ->
-        Text(
-            textAlign = TextAlign.Center,
-            fontStyle = FontStyle.Normal,
-            color = ThemeExtras.colors.captionColor,
-            fontSize = 42.sp,
-            text = targetCount.toString()
-        )
-    }
-}
-
-@Composable
-fun RoundedIconButton(
-    modifier: Modifier,
-    icon: RsIcon,
-    tint: Color,
-    enabled: Boolean = true,
-    onClick: () -> Unit
-) {
-    IconButton(
-        modifier = modifier,
-        onClick = onClick,
-        enabled = enabled
-    ) {
-        when (icon) {
-            is ImageVectorIcon -> Icon(
-                imageVector = icon.imageVector,
-                contentDescription = "Start the match",
-                modifier = Modifier.fillMaxSize(1.0f),
-                tint = tint
-            )
-            is DrawableResourceIcon -> Icon(
-                painter = painterResource(id = icon.id),
-                contentDescription = "Start the match",
-                modifier = Modifier.fillMaxSize(1.0f),
-                tint = tint
-            )
-        }
-    }
-}
-
-@Composable
-fun NumericButton(
-    modifier: Modifier,
-    caption: String,
-    captionSize: TextUnit,
-    containerColor: Color,
-    contentColor: Color,
-    enabled: Boolean = true,
-    onClick: () -> Unit
-) {
-    OutlinedButton(
-        modifier = modifier,
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = contentColor
-        ),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
-        enabled = enabled,
-        shape = RoundedCornerShape(12.dp),
-    ) {
-        Text(
-            modifier = Modifier.wrapContentSize(),
-            text = caption,
-            fontSize = captionSize,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-@Composable
-fun PointsButton(
-    team: Team,
-    pointsScored: Int,
-    containerColor: Color,
-    onPointsScored: (Team, Int) -> Unit
-) {
-    NumericButton(
-        modifier = Modifier.size(124.dp),
-        caption = pointsScored.toString(),
-        captionSize = 48.sp,
-        containerColor = containerColor,
-        contentColor = ThemeExtras.colors.captionColor
-    ) {
-        onPointsScored(team, pointsScored)
-    }
-}
-
-@Composable
-fun RowScope.SinglePointButton(
-    team: Team,
-    pointsScored: Int,
-    caption: String,
-    containerColor: Color,
-    onPointsScored: (Team, Int) -> Unit
-) {
-    NumericButton(
-        modifier = Modifier
-            .fillMaxHeight()
-            .weight(0.5f)
-            .padding(8.dp),
-        caption = caption,
-        captionSize = 48.sp,
-        containerColor = containerColor,
-        contentColor = ThemeExtras.colors.captionColor
-    ) {
-        onPointsScored(team, pointsScored)
     }
 }
 
@@ -506,41 +324,4 @@ fun ColumnScope.ControlButtonRow(
     }
 }
 
-//
-//@Preview
-//@Composable
-//fun ScoreBoardPreview(
-//){RawScoreTheme {
-//    ScoreBoard(game = Game(
-//        teamOne = Team(1, "Indiana Pacers"),
-//        teamTwo = Team(2, "Milwaukee Bucks")
-//    ))
-//}}
 
-//@Preview
-//@Composable
-//fun SquareNumericButtonPreview() {
-//    RawScoreTheme {
-//        SquareNumericButton(
-//            modifier = Modifier.size(96.dp),
-//            caption = "1",
-//            captionSize = 24.sp,
-//            containerColor = Color.Red,
-//            contentColor = Color.White
-//        ) {
-//        }
-//    }
-//}
-
-//@Preview
-//@Composable
-//fun RoundedIconButtonPreview() {
-//    RawScoreTheme {
-//        RoundedIconButton(
-//            modifier = Modifier.size(64.dp),
-//            icon = ImageVectorIcon(Icons.Filled.Replay),
-//            tint = ThemeExtras.colors.bigIconColor,
-//        ) {
-//        }
-//    }
-//}
