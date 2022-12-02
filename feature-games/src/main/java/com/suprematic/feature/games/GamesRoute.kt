@@ -24,6 +24,7 @@ import com.suprematic.domain.entities.*
 import com.suprematic.ui.composables.EmptyScreen
 import com.suprematic.ui.compositionLocalProviders.ThemeExtras
 import com.suprematic.ui.theme.RawScoreTheme
+import com.suprematic.utils.formatAsTime
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,12 +37,12 @@ fun GamesRoute(
 }
 
 @Composable
-fun GamesScreen(games: List<Game>, noGamesFound: Boolean) {
+fun GamesScreen(games: Map<Game, String>, noGamesFound: Boolean) {
     if (noGamesFound) {
-            EmptyScreen(
-                imageVector = Icons.Outlined.Gamepad,
-                text = stringResource(id = R.string.no_saved_games_yet)
-            )
+        EmptyScreen(
+            imageVector = Icons.Outlined.Gamepad,
+            text = stringResource(id = R.string.no_saved_games_yet)
+        )
 
     } else {
         GamesScreen(games = games)
@@ -49,9 +50,9 @@ fun GamesScreen(games: List<Game>, noGamesFound: Boolean) {
 }
 
 @Composable
-fun GamesScreen(games: List<Game>){
+fun GamesScreen(games: Map<Game, String>) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(games) { game ->
+        items(games.keys.toList()) { game ->
             Card(
                 shape = RoundedCornerShape(4.dp),
                 elevation = CardDefaults.cardElevation(
@@ -66,7 +67,10 @@ fun GamesScreen(games: List<Game>){
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    GameItem(game)
+                    GameItem(
+                        game = game,
+                        formattedDateTime = games.getOrDefault(game, "")
+                    )
                 }
             }
         }
@@ -75,15 +79,22 @@ fun GamesScreen(games: List<Game>){
 
 
 @Composable
-fun GameItem(game: Game) {
-    GameDataRow(game = game)
+fun GameItem(
+    game: Game,
+    formattedDateTime: String
+) {
+    GameDataRow(
+        game = game,
+        formattedDateTime = formattedDateTime)
     Divider(modifier = Modifier.fillMaxWidth())
     TeamPointsRow(team = game.teamOne, points = game.pointsTeamOne)
     TeamPointsRow(team = game.teamTwo, points = game.pointsTeamTwo)
 }
 
 @Composable
-fun GameDataRow(game: Game) {
+fun GameDataRow(
+    game: Game,
+    formattedDateTime: String) {
     Row(
         modifier =
         Modifier
@@ -115,7 +126,7 @@ fun GameDataRow(game: Game) {
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 4.dp)
                     .weight(0.5f),
-                text = "Game in progress",
+                text = "${stringResource(R.string.in_progress)} ${game.duration.formatAsTime()}",
                 textAlign = TextAlign.End,
                 fontSize = 14.sp,
                 color = colorInProgress
@@ -131,17 +142,12 @@ fun GameDataRow(game: Game) {
                 fontSize = 14.sp,
                 color = ThemeExtras.colors.captionColorSecondary
             )
-            val dateFormat = SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.getDefault())
-            val calendar = Calendar.getInstance().apply {
-                timeInMillis = game.timeStamp
-            }
-            val stringDate = dateFormat.format(calendar.time)
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 4.dp)
                     .weight(0.5f),
-                text = stringDate,
+                text = formattedDateTime,
                 textAlign = TextAlign.End,
                 fontSize = 14.sp,
                 color = ThemeExtras.colors.captionColorSecondary
@@ -184,7 +190,7 @@ fun TeamPointsRow(team: Team?, points: Int) {
 fun GamesScreenPreview() {
     RawScoreTheme {
         GamesScreen(
-            games = listOf(
+            games = mapOf(
                 Game(
                     id = 1,
                     timeStamp = System.currentTimeMillis(),
@@ -194,7 +200,7 @@ fun GamesScreenPreview() {
                     pointsTeamTwo = 111,
                     sport = basketball,
                     isInProgress = true
-                ),
+                ) to "12.11.2022 21:00:00",
                 Game(
                     id = 1,
                     timeStamp = System.currentTimeMillis(),
@@ -203,7 +209,7 @@ fun GamesScreenPreview() {
                     pointsTeamOne = 134,
                     pointsTeamTwo = 99,
                     sport = basketball
-                )
+                ) to "11.11.2022 22:00:00",
             )
         )
     }

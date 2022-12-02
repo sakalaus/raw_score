@@ -8,6 +8,7 @@ import com.suprematic.domain.usecases.UseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,6 +30,7 @@ class ScoreViewModel @Inject constructor(
             useCases.getGameInProgress()?.let { game ->
                 _uiState.update { it.copy(isGameInitialized = true, game = game) }
                 initializeObservers()
+                launchTimer()
             }
         }
     }
@@ -39,7 +41,21 @@ class ScoreViewModel @Inject constructor(
             if (currentUiState.isGameInitialized) {
                 _uiState.update { it.copy(game = updatedGame) }
             }
-        }.launchIn(viewModelScope)
+        }
+            .launchIn(viewModelScope)
+    }
+
+    private fun launchTimer() {
+        viewModelScope.launch(Dispatchers.Default) {
+            while(true){
+                if (currentUiState.isGameActive){
+                    delay(1000L)
+                    currentUiState.game?.let{ game ->
+                        useCases.updateGameDuration(game = game)
+                    }
+                }
+            }
+        }
     }
 
     fun onEvent(event: ScoreUiEvent) {
@@ -94,6 +110,7 @@ class ScoreViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _uiState.update { it.copy(isGameInitialized = true, game = useCases.initializeGame()) }
             initializeObservers()
+            launchTimer()
         }
     }
 

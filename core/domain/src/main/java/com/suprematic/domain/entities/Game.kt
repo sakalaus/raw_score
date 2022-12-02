@@ -12,3 +12,14 @@ class Game(
     val isInProgress: Boolean = false,
     val isPaused: Boolean = false
 )
+
+
+val mockGame = Game(
+    id = -1L,
+    teamOne = teamOneIndiana,
+    teamTwo = teamTwoUtah,
+    sport = basketball,
+    pointsTeamOne = 54,
+    pointsTeamTwo = 48,
+    isInProgress = true
+)
