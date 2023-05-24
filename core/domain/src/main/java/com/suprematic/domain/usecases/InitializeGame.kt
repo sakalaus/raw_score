@@ -6,7 +6,6 @@ import com.suprematic.domain.entities.Game
 import com.suprematic.domain.entities.teamOneIndiana
 import com.suprematic.domain.entities.teamTwoUtah
 import com.suprematic.domain.usecases.settings.PREFERRED_SPORT_KEY
-import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import kotlin.random.Random
 

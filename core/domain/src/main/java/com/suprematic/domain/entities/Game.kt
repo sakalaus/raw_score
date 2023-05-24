@@ -1,6 +1,6 @@
 package com.suprematic.domain.entities
 
-class Game(
+data class Game(
     val id: Long,
     val timeStamp: Long = 0,
     val teamOne: Team? = null,
@@ -11,7 +11,10 @@ class Game(
     val duration: Long = 0,
     val isInProgress: Boolean = false,
     val isPaused: Boolean = false
-)
+){
+    val isScoreOpened
+    get() = pointsTeamOne + pointsTeamTwo > 0
+}
 
 
 val mockGame = Game(
