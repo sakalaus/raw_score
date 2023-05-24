@@ -92,7 +92,7 @@ fun ScoreScreen(
                     animationSpec = tween(durationMillis = 500, easing = FastOutLinearInEasing)
                 ),
 
-            ) {
+                ) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     Column(
                         modifier = Modifier
@@ -299,7 +299,8 @@ fun ColumnScope.ControlButtonRow(
         RoundedIconButton(
             modifier = Modifier.size(64.dp),
             icon = ImageVectorIcon(Icons.Filled.Replay),
-            tint = ThemeExtras.colors.smallIconColor
+            enabled = (game?.isScoreOpened == true),
+            tint = if (game?.isScoreOpened == true) ThemeExtras.colors.smallIconColor else ThemeExtras.colors.smallIconColorDimmed
         ) {
             onUndoLastEntry()
         }
